@@ -1,5 +1,5 @@
 Aim trainer for shooters, (in ThreeJS)
-![Preview Image](preview.png)
+![Preview](preview.gif)
 
 # How to install
 
