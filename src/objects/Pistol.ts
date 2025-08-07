@@ -2,9 +2,7 @@ import {
   Group,
   Mesh,
   MeshBasicMaterial,
-  Color,
   BackSide,
-  Object3D,
   Vector3,
   Camera,
 } from "three";
