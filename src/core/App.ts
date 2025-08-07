@@ -2,8 +2,13 @@ import Renderer from "./Renderer";
 import Camera from "./Camera";
 import MainScene from "../scenes/MainScene";
 import Loop from "./Loop";
-import Controls from "../systems/Controls";
+import ControlsWithMovement from "../systems/ControlsWithMovement";
 import StartScreen from "../ui/StartScreen";
+import Crosshair from "../objects/Crosshair";
+import { Mesh, Raycaster, Vector2 } from "three";
+import Pistol from "../objects/Pistol";
+import type Cube from "../objects/Cube";
+
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 
 export default class App {
@@ -11,34 +16,139 @@ export default class App {
   camera: Camera;
   scene: MainScene;
   loop: Loop;
-  controls: Controls;
+  controls: ControlsWithMovement;
+  pistol: Pistol;
+  timerElement: HTMLElement;
+  startTime: number = 0;
+  timerInterval: number | null = null;
+  level: number =0;
+  targets: Cube[] = [];
+  gameRunning: boolean = false;
   constructor() {
+    this.timerElement = document.getElementById("timer")!;
+    this.gameRunning = false;
     this.renderer = new Renderer(canvas);
     this.camera = new Camera();
-    this.scene = new MainScene();
-    this.loop = new Loop(
-      this.renderer.instance,
-      this.scene,
-      this.camera.instance
-    );
-    this.controls = new Controls(this.camera.instance, canvas);
+    this.scene = new MainScene(this.targets);
+    this.controls = new ControlsWithMovement(this.camera.instance, canvas);
     this.scene.add(this.controls.object);
     this.camera.instance.position.set(0, 0, 0);
     this.camera.instance.rotation.set(0, (Math.PI / 2) * 3, 0);
+    this.pistol = new Pistol(this.camera.instance, (loadedPistol) => {
+      this.camera.instance.add(loadedPistol);
+      this.pistol = loadedPistol;
+    });
+    this.loop = new Loop(
+      this.renderer.instance,
+      this.scene,
+      this.camera.instance,
+      this.controls,
+      this.pistol
+    );
+
     // Handle resize
     window.addEventListener("resize", () => {
       this.camera.instance.aspect = window.innerWidth / window.innerHeight;
       this.camera.instance.updateProjectionMatrix();
       this.renderer.instance.setSize(window.innerWidth, window.innerHeight);
     });
-  }
-  start() {
-    /* Build the start overlay and wait until user presses Start */
 
-    new StartScreen(canvas, () => {
-      this.loop.start();
-      this.controls.initPointerLock();
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && !this.gameRunning && this.level > 0) {
+        this.startTimer();
+        this.scene.level(this.level);
+        this.timerElement.innerHTML = "0.00s";
+        this.gameRunning = true;
+      }
     });
   }
-  level1() {}
+  startTimer() {
+    this.startTime = performance.now();
+    this.timerInterval = window.setInterval(() => {
+      const elapsed = (performance.now() - this.startTime) / 1000;
+      this.timerElement.innerText = `${elapsed.toFixed(2)}s`;
+    }, 100);
+  }
+
+  stopTimer() {
+    this.timerElement.innerHTML += "<br>Press Space to start again";
+    this.gameRunning = false
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  start() {
+    new StartScreen(canvas, (level) => {
+      this.gameRunning = true;
+      this.loop.start();
+      this.startTimer();
+      this.controls.initPointerLock();
+      const crosshair = new Crosshair();
+      this.camera.instance.add(crosshair);
+      
+      this.scene.level(level);
+      this.level = level;
+      document.addEventListener("click", () => {
+        if (!this.gameRunning) return;
+        this.checkCrosshairIntersections();
+      });
+
+      document.addEventListener("click", () => {
+        if (document.pointerLockElement !== canvas) {
+          canvas.requestPointerLock();
+        }
+      });
+    });
+  }
+
+  update() {
+    if (!this.gameRunning) return;
+    this.controls.update();
+    
+  }
+
+  private raycaster = new Raycaster();
+  private mouse = new Vector2(0, 0);
+  public checkCrosshairIntersections() {
+    this.raycaster.setFromCamera(this.mouse, this.camera.instance);
+    const clickableObjects: Mesh[] = [];
+    this.scene.traverse((child) => {
+      if (child.type === "Mesh" && child.name === "Target") {
+        clickableObjects.push(child as Mesh);
+      }
+    });
+
+    const intersects = this.raycaster.intersectObjects(clickableObjects, true);
+
+    if (intersects.length > 0) {
+      this.targets.forEach((target) => {
+        const hit = target.children[0].uuid === intersects[0].object.uuid;
+
+        if (hit && target.shootable && !target.animating) {
+          target.absorbAndDisappear();
+
+          // Filter valid candidates
+          const candidates = this.targets.filter(
+            (t) => t.visible && !t.shootable && t !== target
+          );
+
+          //Choose one at random from the candidates
+          const randomTarget =
+            candidates[Math.floor(Math.random() * candidates.length)];
+
+          // Activate it if it exists
+          if (randomTarget) {
+            randomTarget.makeShootable();
+          }
+        }
+      });
+    }
+
+    const remaining = this.targets.some(t => t.visible && !t.animating && t.shootable);
+    if (!remaining) {
+      this.stopTimer();
+    }
+  }
 }

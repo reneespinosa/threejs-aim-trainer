@@ -10,32 +10,32 @@
         overflow: hidden;
       }
       /* styles.css (or inside a <style> block) */
-      #startScreen {
+      .startScreen {
         position: fixed; /* cover the whole window */
         inset: 0;
-        background: radial-gradient(#0e0e0e, #000); /* simple vignette */
+        background: radial-gradient(#fff, #fff); /* simple vignette */
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         gap: 1.5rem;
-        color: #fff;
+        color: #000;
         font-family: sans-serif;
         z-index: 10; /* sit above the canvas */
       }
 
-      #startButton {
+      .startButton {
         font-size: 1.25rem;
         padding: 0.75rem 2.5rem;
-        border: 2px solid #fff;
+        border: 2px solid #000;
         background: transparent;
         color: inherit;
         cursor: pointer;
         transition: background 0.2s;
       }
 
-      #startButton:hover,
-      #startButton:focus {
+      .startButton:hover,
+      .startButton:focus {
         background: #ffffff20;
       }
 
@@ -47,11 +47,32 @@
   </head>
   <body>
     <canvas id="canvas"></canvas>
-    <div id="startScreen">
+    <div class="startScreen">
       <h1>Quick Warm Up for Shooters</h1>
-      <button id="startButton">Start Game</button>
-      <p class="hint">Click or press Space to begin</p>
+      <button class="startButton" id="startButton1">3 Targets</button>
+      <button class="startButton" id="startButton2">8 Targets</button>
+      <button class="startButton" id="startButton3">50 Targets</button>
+      <p class="hint">Click or press Space to choose randomly</p>
     </div>
+    <!-- En tu index.html -->
+    <div
+      id="timer"
+      style="
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 32px;
+        font-family: monospace;
+        color: black;
+        pointer-events: none;
+        z-index: 10;
+        user-select: none;
+      "
+    >
+      0.00s
+      
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

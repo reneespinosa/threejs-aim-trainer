@@ -1,25 +1,27 @@
 export default class StartScreen {
-  private overlay = document.getElementById("startScreen") as HTMLDivElement;
-  private button = document.getElementById("startButton") as HTMLButtonElement;
+  private overlay = document.querySelector(".startScreen") as HTMLDivElement;
+  private button = [...document.querySelectorAll(".startButton")] as HTMLButtonElement[];
   private canvas: HTMLCanvasElement;
-  private onStart: () => void;
+  private onStart: (level: number) => void;
 
-  constructor(canvas: HTMLCanvasElement, onStart: () => void) {
+  constructor(canvas: HTMLCanvasElement, onStart: (level: number) => void) {
     this.canvas = canvas;
     this.onStart = onStart;
     this.bindEvents();
   }
 
   private bindEvents() {
-    const launch = () => this.start();
-
-    this.button.addEventListener("click", launch);
+    this.button[0].addEventListener("click", () => this.start(1));
+    this.button[1].addEventListener("click", () => this.start(2));
+    this.button[2].addEventListener("click", () => this.start(3));
+    
     document.addEventListener("keydown", (e) => {
-      if (e.code === "Space" && !this.isHidden()) launch();
+      const randomNumber = Math.floor(Math.random() * 3)+ 1;
+      if (e.code === "Space" && !this.isHidden()) this.start(randomNumber);
     });
   }
 
-  private async start() {
+  private async start(level: number) {
     this.hide();
 
     /* Optional: grab pointer lock immediately */
@@ -29,7 +31,8 @@ export default class StartScreen {
       /* swallow – user can click once inside the game to lock */
     }
 
-    this.onStart(); // kick off your game loop / init logic
+    this.onStart(level)
+    
   }
 
   private hide() {
