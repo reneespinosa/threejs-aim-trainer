@@ -1,5 +1,9 @@
 # Aim trainer for shooters, (in ThreeJS)
-![Preview](preview.gif)
+<h3 align="center">🎮 Game Preview</h3>
+
+<p align="center">
+  <img src="preview.gif" alt="Preview" width="800">
+</p>
 
 ## How to install
 
