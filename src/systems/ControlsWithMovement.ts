@@ -9,9 +9,9 @@ export default class Controls {
 
   private sensitivity = 0.0002;
   private PI_2 = Math.PI / 2;
-  private moveSpeed = 1;
+  private moveSpeed = 8;
   private velocity = new THREE.Vector3();
-  private acceleration = 0.002;
+  private acceleration = 0.07;
   private damping = 0.9;
 
   private keysPressed: Record<string, boolean> = {};
