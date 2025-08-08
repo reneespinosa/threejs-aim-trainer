@@ -90,9 +90,12 @@ export default class App {
       
       this.scene.level(level);
       this.level = level;
-      document.addEventListener("click", () => {
+      document.addEventListener("mousedown", (e) => {
         if (!this.gameRunning) return;
-        this.checkCrosshairIntersections();
+
+        if(e.button === 0){
+          this.checkCrosshairIntersections();
+        }
       });
 
       document.addEventListener("click", () => {
