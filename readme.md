@@ -1,25 +1,25 @@
-Aim trainer for shooters, (in ThreeJS)
+# Aim trainer for shooters, (in ThreeJS)
 ![Preview](preview.gif)
 
-# How to install
+## How to install
 
 ```bash
 npm install
 ```
 
-# How to run
+## How to run
 
 ```bash
 npm run dev
 ```
 
-# How to build
+## How to build
 
 ```bash
 npm run build
 ```
 
-# How to preview
+## How to preview
 
 ```bash
 npm run preview
