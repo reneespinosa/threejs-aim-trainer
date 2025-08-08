@@ -103,9 +103,9 @@ export default class App {
     });
   }
 
-  update() {
+  update(deltaTime: number) {
     if (!this.gameRunning) return;
-    this.controls.update();
+    this.controls.update(deltaTime);
     
   }
 
