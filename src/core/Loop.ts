@@ -2,8 +2,9 @@
 import * as THREE from "three";
 import ControlsWithMovement from "../systems/ControlsWithMovement";
 import Pistol from "../objects/Pistol";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 export default class Loop {
-  renderer: THREE.WebGLRenderer;
+  renderer: EffectComposer;
   scene: THREE.Scene;
   camera: THREE.Camera;
   active: boolean;  
@@ -12,7 +13,7 @@ export default class Loop {
   controls: ControlsWithMovement;
   pistol: Pistol;
   constructor(
-    renderer: THREE.WebGLRenderer,
+    renderer: EffectComposer,
     scene: THREE.Scene,
     camera: THREE.Camera,
     controls: ControlsWithMovement,
@@ -44,6 +45,6 @@ export default class Loop {
     this.controls.update();
     this.pistol.update(this.deltaTime, this.camera);
     requestAnimationFrame(this.animate);
-    this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this.deltaTime);
   };
 }

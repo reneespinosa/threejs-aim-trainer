@@ -4,24 +4,29 @@ import * as THREE from "three";
 export default class Controls {
   private camera: THREE.Camera;
   private domElement: HTMLCanvasElement;
-  private pitchObject = new THREE.Object3D(); // Up/down
-  private yawObject = new THREE.Object3D(); // Left/right
+  private pitchObject = new THREE.Object3D();
+  private yawObject = new THREE.Object3D();
 
   private sensitivity = 0.0002;
   private PI_2 = Math.PI / 2;
   private moveSpeed = 1;
-  // Add this property to the class
   private velocity = new THREE.Vector3();
-  private acceleration = 0.002; // how fast it speeds up
-  private damping = 0.9; // how fast it slows down (0.9 = smoother)
+  private acceleration = 0.002;
+  private damping = 0.9;
 
   private keysPressed: Record<string, boolean> = {};
 
- 
-  constructor(camera: THREE.Camera, domElement: HTMLCanvasElement ) {
+  constructor(camera: THREE.Camera, domElement: HTMLCanvasElement) {
     this.camera = camera;
     this.domElement = domElement;
-    
+    const sensitivitySlider = document.getElementById(
+      "sensitivityRange"
+    ) as HTMLInputElement;
+
+    sensitivitySlider.addEventListener("input", () => {
+      const value = parseFloat(sensitivitySlider.value);
+      this.sensitivity = value * 0.0002;
+    });
 
     this.pitchObject.add(this.camera);
     this.yawObject.add(this.pitchObject);
@@ -61,52 +66,37 @@ export default class Controls {
     };
 
     document.addEventListener("mousemove", onMouseMove, false);
-
-  
   }
 
-  // Replace update() with this:
-  public update() {
+  public update(deltaTime: number) {
     const targetDirection = new THREE.Vector3();
 
-    // Forward/backward
     if (this.keysPressed["a"]) targetDirection.z -= 1;
     if (this.keysPressed["d"]) targetDirection.z += 1;
-
-    // Left/right
     if (this.keysPressed["s"]) targetDirection.x -= 1;
     if (this.keysPressed["w"]) targetDirection.x += 1;
     this.yawObject.position.x = THREE.MathUtils.clamp(
       this.yawObject.position.x,
       -6.2,
-     8.2
+      8.2
     );
-    
+
     this.yawObject.position.z = THREE.MathUtils.clamp(
       this.yawObject.position.z,
       -7.3,
       7.3
     );
-    
+
     targetDirection.normalize();
-
-    // Apply camera rotation to direction
     targetDirection.applyQuaternion(this.yawObject.quaternion);
-    targetDirection.y = 0; // Lock to horizontal plane
-
-    // Accelerate towards the target direction
+    targetDirection.y = 0;
     this.velocity.lerp(
       targetDirection.multiplyScalar(this.moveSpeed),
       this.acceleration
     );
 
-    // Apply damping
-    this.velocity.multiplyScalar(this.damping);
+    this.velocity.multiplyScalar(Math.pow(this.damping, deltaTime));
 
-    // Move the yawObject
-    this.yawObject.position.add(this.velocity);
+    this.yawObject.position.addScaledVector(this.velocity, deltaTime);
   }
 }
-
-
-

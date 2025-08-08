@@ -27,9 +27,9 @@ export default class App {
   constructor() {
     this.timerElement = document.getElementById("timer")!;
     this.gameRunning = false;
-    this.renderer = new Renderer(canvas);
     this.camera = new Camera();
     this.scene = new MainScene(this.targets);
+    this.renderer = new Renderer(this.scene , this.camera.instance ,canvas);
     this.controls = new ControlsWithMovement(this.camera.instance, canvas);
     this.scene.add(this.controls.object);
     this.camera.instance.position.set(0, 0, 0);

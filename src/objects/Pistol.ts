@@ -37,8 +37,8 @@ export default class Pistol extends Group {
           });
 
           const outlineMesh = new Mesh(mesh.geometry.clone(), outlineMaterial);
-          outlineMesh.scale.copy(mesh.scale).multiplyScalar(1.01); 
-          outlineMesh.position.copy(mesh.position.add(new Vector3(0.01, -0.01, 0)));
+          outlineMesh.scale.copy(mesh.scale).multiplyScalar(1.02); 
+          outlineMesh.position.copy(mesh.position.add(new Vector3(0.01, -0.02, 0)));
           outlineMesh.rotation.copy(mesh.rotation);
 
           outlineMesh.userData.isOutline = true;

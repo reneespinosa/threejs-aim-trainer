@@ -42,6 +42,9 @@ export default class Cube extends THREE.Group {
     const cubeMesh = this.children.find(
       (child) => child instanceof THREE.Mesh
     ) as THREE.Mesh;
+
+    this.layers.enable(1); 
+
     if (cubeMesh && cubeMesh.material instanceof THREE.ShaderMaterial) {
       cubeMesh.material.uniforms.uColor.value.set(color);
     }
