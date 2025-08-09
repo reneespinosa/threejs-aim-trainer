@@ -2,8 +2,6 @@ import {
   Group,
   Mesh,
   MeshBasicMaterial,
-  BackSide,
-  Vector3,
   Camera,
 } from "three";
 import GLTFLoader from "../loaders/GLTFLoader";
@@ -28,22 +26,7 @@ export default class Pistol extends Group {
       model.traverse((child) => {
         if ((child as Mesh).isMesh) {
           const mesh = child as Mesh;
-
-          if (mesh.userData.isOutline) return;
           mesh.material = new MeshBasicMaterial({ color: "white" });
-          const outlineMaterial = new MeshBasicMaterial({
-            color: "black",
-            side: BackSide,
-          });
-
-          const outlineMesh = new Mesh(mesh.geometry.clone(), outlineMaterial);
-          outlineMesh.scale.copy(mesh.scale).multiplyScalar(1.02); 
-          outlineMesh.position.copy(mesh.position.add(new Vector3(0.01, -0.02, 0)));
-          outlineMesh.rotation.copy(mesh.rotation);
-
-          outlineMesh.userData.isOutline = true;
-
-          this.add(outlineMesh); // ✅ no lo metas dentro del mesh original
         }
       });
 

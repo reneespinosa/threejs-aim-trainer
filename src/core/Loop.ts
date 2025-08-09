@@ -41,6 +41,7 @@ export default class Loop {
 
     const now = performance.now();
     this.deltaTime = (now - this.lastTime) / 1000;
+    
     this.lastTime = now;
     this.controls.update(this.deltaTime);
     this.pistol.update(this.deltaTime, this.camera);
