@@ -94,6 +94,7 @@ export default class App {
         if (!this.gameRunning) return;
 
         if(e.button === 0){
+          this.pistol.shoot();
           this.checkCrosshairIntersections();
         }
       });
