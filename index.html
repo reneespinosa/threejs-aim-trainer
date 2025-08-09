@@ -133,6 +133,28 @@
       "
     />
     
+    <script>
+      function isTouchDevice() {
+        return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+      }
+      if (isTouchDevice()) {
+        document.body.innerHTML = `
+          <div style="
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            height:100vh;
+            text-align:center;
+            font-family:sans-serif;
+            padding:20px;
+          ">
+            <h1>This game is designed for PC</h1>
+            <p>Please switch to a desktop or laptop for the best experience.</p>
+          </div>
+        `;
+      }
+    </script>
     <script type="module" src="/src/main.ts"></script>
     <script>
       const sensitivitySlider = document.getElementById("sensitivityRange");
