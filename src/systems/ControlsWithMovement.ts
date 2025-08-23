@@ -14,6 +14,12 @@ export default class Controls {
   private acceleration = 0.07;
   private damping = 0.9;
 
+  private isCrouching = false;
+  private standHeight = 0;
+  private crouchHeight = -0.4;
+  private heightLerp = 10;
+  private crouchSpeedFactor = 0.6;
+
   private keysPressed: Record<string, boolean> = {};
 
   constructor(camera: THREE.Camera, domElement: HTMLCanvasElement) {
@@ -42,10 +48,18 @@ export default class Controls {
   private initKeyboardListeners() {
     document.addEventListener("keydown", (e) => {
       this.keysPressed[e.key.toLowerCase()] = true;
+
+      if (e.key.toLowerCase() === "control") {
+        this.isCrouching = true;
+      }
     });
 
     document.addEventListener("keyup", (e) => {
       this.keysPressed[e.key.toLowerCase()] = false;
+
+      if (e.key.toLowerCase() === "control") {
+        this.isCrouching = false;
+      }
     });
   }
 
@@ -90,13 +104,17 @@ export default class Controls {
     targetDirection.normalize();
     targetDirection.applyQuaternion(this.yawObject.quaternion);
     targetDirection.y = 0;
+    const effectiveSpeed = this.moveSpeed * (this.isCrouching ? this.crouchSpeedFactor : 1);
     this.velocity.lerp(
-      targetDirection.multiplyScalar(this.moveSpeed),
+      targetDirection.multiplyScalar(effectiveSpeed),
       this.acceleration
     );
 
     this.velocity.multiplyScalar(Math.pow(this.damping, deltaTime));
 
     this.yawObject.position.addScaledVector(this.velocity, deltaTime);
+
+    const targetY = this.isCrouching ? this.crouchHeight : this.standHeight;
+    this.pitchObject.position.y += (targetY - this.pitchObject.position.y) * this.heightLerp * deltaTime;
   }
 }
