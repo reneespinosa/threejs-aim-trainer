@@ -38,6 +38,8 @@ npm run preview
 | Move Forward / Back | `W` / `S` |
 | Strafe Left / Right | `A` / `D` |
 | Shoot                | `Left Click` |
+| Crouch               | `C` (hold) |
+| Jump                 | `Space` |
 | Lock Pointer         | `Click` inside canvas |
 | Start Round          | `Space` |
 
