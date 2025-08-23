@@ -65,7 +65,7 @@ export default class Controls {
     document.addEventListener("keydown", (e) => {
       this.keysPressed[e.key.toLowerCase()] = true;
 
-      if (e.key.toLowerCase() === "control") {
+      if (e.key.toLowerCase() === "c") {
         this.isCrouching = true;
       }
 
@@ -77,7 +77,7 @@ export default class Controls {
     document.addEventListener("keyup", (e) => {
       this.keysPressed[e.key.toLowerCase()] = false;
 
-      if (e.key.toLowerCase() === "control") {
+      if (e.key.toLowerCase() === "c") {
         this.isCrouching = false;
       }
     });
